@@ -1,0 +1,4 @@
+secrets/credentials.json
+secrets/token.json
+secrets/mongopassword.txt
+secrets/mongouser.txt

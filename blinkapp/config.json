@@ -1,0 +1,14 @@
+{
+    "development": {
+        "config_id": "development",
+        "holidaysToExclude": ["wales", "scotland", "ireland", "george", "guy fawkes", "halloween", "birthday", "daylight", "remembrance"],
+        "dayStartTime": "07:00:00",
+        "dayEndTime": "19:00:00"
+    },
+    "production": {
+        "config_id": "production",
+        "holidaysToExclude": ["wales", "scotland", "ireland", "george", "guy fawkes", "halloween", "birthday", "daylight", "remembrance"],
+        "dayStartTime": "07:00:00",
+        "dayEndTime": "19:00:00"
+    }
+}

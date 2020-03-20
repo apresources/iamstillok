@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert
+    kompose.version: 1.12.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mongo
+  name: mongo
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: mongo
+    spec:
+      containers:
+      - args:
+        - --auth
+        image: mongo
+        name: mongo
+        resources: {}
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongodata
+        - mountPath: /var/run/secrets
+          name: mongo-claim1
+      restartPolicy: Always
+      volumes:
+      - name: mongodata
+        persistentVolumeClaim:
+          claimName: mongodata
+      - name: mongo-claim1
+        persistentVolumeClaim:
+          claimName: mongo-claim1
+status: {}

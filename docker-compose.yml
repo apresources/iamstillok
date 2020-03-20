@@ -1,0 +1,81 @@
+version: '3'
+
+services:
+  blinkapp:
+    build:
+      context: ./
+      dockerfile: ./blinkapp/Dockerfile
+    image: blink-img:latest
+    restart: always
+    depends_on:
+        - mongo
+    links:
+      - mongo:mongo
+    networks:
+        - blinkappsnetwork
+  
+  graphapp-client:
+    build: ./graphapp-client
+    image: graphapp-client
+    ports:
+        - "3000:3000"
+          #volumes:
+          #- ./graphapp-client:/usr/src/app
+    depends_on:
+        - graphapp-api
+    links:
+        - graphapp-api
+    networks:
+        - blinkappsnetwork
+        
+  graphapp-api:
+    build:
+      context: ./
+      dockerfile: ./graphapp-api/Dockerfile
+    image: graphapp-api:latest
+    ports:
+        - "9000:9000"
+    # volumes:
+    #     - ./graphapp-api:/usr/src/app
+    depends_on:
+        - mongo
+    networks:
+        - blinkappsnetwork
+
+  mongo:
+    image: mongo
+    restart: always
+    #environment:
+    #  MONGO_INITDB_ROOT_USERNAME_FILE: /var/run/secrets/mongouser.txt
+    #  MONGO_INITDB_ROOT_PASSWORD_FILE: /var/run/secrets/mongopassword.txt
+    command: [--auth]
+    volumes:
+      - mongodata:/data/db
+      - ./secrets:/var/run/secrets
+    networks:
+        - blinkappsnetwork
+
+  mongo-express:
+    build: ./mongo-express
+    image: mongo-express-img
+    restart: always
+    ports:
+      - 8081:8081
+    links:
+      - mongo:mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME_FILE: /node_modules/mongo-express/secrets/mongouser.txt
+      ME_CONFIG_MONGODB_ADMINPASSWORD_FILE: /node_modules/mongo-express/secrets/mongopassword.txt
+    volumes:
+      - ./secrets:/node_modules/mongo-express/secrets
+    depends_on:
+      - mongo
+    networks:
+        - blinkappsnetwork
+
+volumes:
+  mongodata:
+
+networks:
+  blinkappsnetwork:
+    driver: bridge
